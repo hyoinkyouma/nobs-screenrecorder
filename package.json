@@ -1,5 +1,6 @@
 {
-  "name": "fucking-screen-recorder",
+  "name": "nobs_screenrecorder",
+  "author": "Roman",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -38,6 +39,8 @@
     ]
   },
   "build": {
+    "productName": "No BS ScreenRecorder",
+    "appId": "com.electron.NoBSScreenRecorder",
     "directories": {
       "buildResources": "assets"
     }

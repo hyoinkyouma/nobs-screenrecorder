@@ -81,7 +81,7 @@ function MainWindow() {
                   margin: "1rem",
                 }}
               >
-                Fucking Screen Recorder
+                NoBS Screen Recorder
               </h1>
             </div>
           </div>
