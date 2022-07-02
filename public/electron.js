@@ -6,7 +6,7 @@ const {
   ipcMain,
   dialog,
 } = require("electron");
-const { writeFile } = require("fs");
+const fs = require("fs");
 const isDev = require("electron-is-dev");
 
 const path = require("path");
@@ -22,6 +22,7 @@ function createWindow() {
 
   ipcMain.on("selectBuffer", async (e, buffer) => {
     console.log("video saving");
+    const bufferWrite = buffer;
 
     const { filePath } = await dialog.showSaveDialog({
       buttonLabel: "Save video",
@@ -29,7 +30,7 @@ function createWindow() {
     });
     if (filePath) {
       try {
-        writeFile(filePath, buffer, () =>
+        fs.writeFileSync(filePath, bufferWrite, () =>
           console.log("video saved successfully!")
         );
       } catch (e) {
@@ -38,7 +39,9 @@ function createWindow() {
       }
     }
   });
-  win.setMenu(null);
+
+  if (!isDev) win.setMenu(null);
+
   ipcMain.on("selectSource", async () => {
     const inputSources = await desktopCapturer.getSources({
       types: ["window", "screen", "audio"],

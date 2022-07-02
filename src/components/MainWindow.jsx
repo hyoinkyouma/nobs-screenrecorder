@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Buffer } from "buffer";
 import "../style.css";
+var Buffer = require("buffer/").Buffer;
+
 function MainWindow() {
   const [buttonText, setButtonText] = useState("Select a Video Source");
   const [mediaRecorder, setMediaRecord] = useState({});
@@ -24,11 +25,12 @@ function MainWindow() {
           },
         },
         video: {
-          ideal: { width: 1920, height: 1080 },
+          ideal: { width: 1920, height: 1080, frameRate: 60 },
           mandatory: {
             chromeMediaSource: "desktop",
             chromeMediaSourceId: arg.id,
-            minFrameRate: 60,
+            minFrameRate: 24,
+            maxFrameRate: 61,
           },
         },
       };
@@ -41,7 +43,7 @@ function MainWindow() {
 
       //media recorder
       const options = {
-        mimeType: "video/x-matroska; codecs=avc1",
+        mimeType: "video/webm; codecs=avc1",
         videoBitsPerSecond: 30000000,
       };
       setMediaRecord(new MediaRecorder(vidStream, options));
@@ -53,7 +55,7 @@ function MainWindow() {
   };
   const handleStop = async (e) => {
     const blob = new Blob(recordedChunks, {
-      type: "video/x-matroska",
+      type: "video/x-matroska; codecs=avc1",
       videoBitsPerSecond: 30000000,
     });
     const buffer = Buffer.from(await blob.arrayBuffer());
