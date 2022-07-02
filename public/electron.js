@@ -7,6 +7,7 @@ const {
   dialog,
 } = require("electron");
 const { writeFile } = require("fs");
+const isDev = require("electron-is-dev");
 
 const path = require("path");
 function createWindow() {
@@ -24,7 +25,7 @@ function createWindow() {
 
     const { filePath } = await dialog.showSaveDialog({
       buttonLabel: "Save video",
-      defaultPath: `vid-${Date.now()}.mp4`,
+      defaultPath: `vid-${Date.now()}.mkv`,
     });
     if (filePath) {
       try {
@@ -37,7 +38,7 @@ function createWindow() {
       }
     }
   });
-  //win.setMenu(null);
+  win.setMenu(null);
   ipcMain.on("selectSource", async () => {
     const inputSources = await desktopCapturer.getSources({
       types: ["window", "screen", "audio"],
@@ -57,7 +58,11 @@ function createWindow() {
     win.webContents.send("send-source", source);
   }
 
-  win.loadURL("http://localhost:3000");
+  win.loadURL(
+    isDev
+      ? "http://localhost:3000"
+      : `file://${path.join(__dirname, "../build/index.html")}`
+  );
 }
 
 app.on("ready", createWindow);

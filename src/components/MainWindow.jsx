@@ -18,11 +18,17 @@ function MainWindow() {
       setButtonText(arg.name);
       console.log(buttonText);
       const vidConstraints = {
-        audio: false,
-        video: {
-          ideal: { width: 1920, height: 1080, frameRate: 60 },
+        audio: {
           mandatory: {
             chromeMediaSource: "desktop",
+          },
+        },
+        video: {
+          ideal: { width: 1920, height: 1080 },
+          mandatory: {
+            chromeMediaSource: "desktop",
+            chromeMediaSourceId: arg.id,
+            minFrameRate: 60,
           },
         },
       };
@@ -30,28 +36,15 @@ function MainWindow() {
       const vidStream = await navigator.mediaDevices.getUserMedia(
         vidConstraints
       );
-      videoElem.srcObject = vidStream;
+      videoElem.srcObject = new MediaStream([...vidStream.getVideoTracks()]);
       videoElem.play();
 
-      const audioConstraints = {
-        audio: {
-          mandatory: {
-            chromeMediaSource: "desktop",
-          },
-        },
-      };
-      const audioStream = await navigator.mediaDevices.getUserMedia(
-        audioConstraints
-      );
-
-      const stream = new MediaStream([
-        ...vidStream.getVideoTracks(),
-        ...audioStream.getAudioTracks(),
-      ]);
-
       //media recorder
-      const options = { mimeType: "video/webm; codecs=vp9" };
-      setMediaRecord(new MediaRecorder(stream, options));
+      const options = {
+        mimeType: "video/x-matroska; codecs=avc1",
+        videoBitsPerSecond: 30000000,
+      };
+      setMediaRecord(new MediaRecorder(vidStream, options));
     });
   };
   const handleDataAvailable = (e) => {
@@ -60,7 +53,8 @@ function MainWindow() {
   };
   const handleStop = async (e) => {
     const blob = new Blob(recordedChunks, {
-      type: "video/webm; codecs=vp9",
+      type: "video/x-matroska",
+      videoBitsPerSecond: 30000000,
     });
     const buffer = Buffer.from(await blob.arrayBuffer());
     window.electronAPI.selectBuffer(buffer);
@@ -87,7 +81,7 @@ function MainWindow() {
                   margin: "1rem",
                 }}
               >
-                Webm Screen Recorder
+                Fucking Screen Recorder
               </h1>
             </div>
           </div>
@@ -152,16 +146,17 @@ function MainWindow() {
           style={{
             display: "flex",
             justifyContent: "space-between",
-            padding: "10px",
+            alignItems: "center",
           }}
         >
-          © 2022 Copyright
+          <span>© 2022 Copyright</span>
           <a
             href="https://romanaugusto.tk"
             className="grey-text text-lighten-4 right"
             target="_blank"
             rel="noreferrer"
           >
+            <em>"This took 5 hours to code wtf i hate js now."</em> <br />-
             Hyouin Kyouma
           </a>
         </div>
